@@ -1,0 +1,35 @@
+name: Deploy Api X-Sports
+on: [workflow_dispatch]
+  push:
+    branches: [master]
+jobs:
+  web-deploy:
+    name: 🎉 Deploy Api X-Sports
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v2
+
+      - name: 📁 Send files via Rsync
+        uses: Burnett01/rsync-deployments@5.2.1
+        with:
+            switches: -avzr
+            path: .
+            remote_path: /home/x-sports/x-sports-api
+            remote_host: ${{ secrets.SSH_HOST }}
+            remote_user: ${{ secrets.SSH_USERNAME }}
+            remote_key: ${{ secrets.SSH_KEY }}
+
+      - name: 🌟 Run server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /home/x-sports/x-sports-api
+            go build ./cmd/xsports-api-http
+            chmod +x ./xsports-api-http
+            pm2 restart backend
+
