@@ -48,7 +48,7 @@ func (s *service) LoginBasic(ctx context.Context, email string, password string)
 	// get user current data
 	current, err := pgStoreClient.GetUserByEmail(ctx, email)
 	if err != nil {
-		return "", admin.TokenData{}, err
+		return "", admin.TokenData{}, admin.ErrInvalidEmail
 	}
 
 	// check password

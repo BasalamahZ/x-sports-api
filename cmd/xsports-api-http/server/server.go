@@ -15,6 +15,10 @@ import (
 	adminhttphandler "github.com/x-sports/internal/admin/handler/http"
 	adminservice "github.com/x-sports/internal/admin/service"
 	adminpgstore "github.com/x-sports/internal/admin/store/postgresql"
+	"github.com/x-sports/internal/game"
+	gamehttphandler "github.com/x-sports/internal/game/handler/http"
+	gameservice "github.com/x-sports/internal/game/service"
+	gamepgstore "github.com/x-sports/internal/game/store/postgresql"
 )
 
 // Following constants are the possible exit code returned
@@ -87,6 +91,22 @@ func new() (*server, error) {
 		}
 	}
 
+	// initialize game service
+	var gameSvc game.Service
+	{
+		pgStore, err := gamepgstore.New(db)
+		if err != nil {
+			log.Printf("[game-api-http] failed to initialize game postgresql store: %s\n", err.Error())
+			return nil, fmt.Errorf("failed to initialize game postgresql store: %s", err.Error())
+		}
+
+		gameSvc, err = gameservice.New(pgStore)
+		if err != nil {
+			log.Printf("[game-api-http] failed to initialize game service: %s\n", err.Error())
+			return nil, fmt.Errorf("failed to initialize game service: %s", err.Error())
+		}
+	}
+
 	// initialize admin HTTP handler
 	{
 		identities := []adminhttphandler.HandlerIdentity{
@@ -100,6 +120,21 @@ func new() (*server, error) {
 		}
 
 		s.handlers = append(s.handlers, adminHTTP)
+	}
+
+	// initialize game HTTP handler
+	{
+		identities := []gamehttphandler.HandlerIdentity{
+			gamehttphandler.HandlerGames,
+		}
+
+		gameHTTP, err := gamehttphandler.New(gameSvc, adminSvc, identities)
+		if err != nil {
+			log.Printf("[game-api-http] failed to initialize game http handlers: %s\n", err.Error())
+			return nil, fmt.Errorf("failed to initialize game http handlers: %s", err.Error())
+		}
+
+		s.handlers = append(s.handlers, gameHTTP)
 	}
 
 	return s, nil
