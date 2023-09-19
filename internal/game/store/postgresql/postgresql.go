@@ -2,8 +2,10 @@ package postgresql
 
 import (
 	"errors"
+	"time"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/x-sports/internal/game"
 	"github.com/x-sports/internal/game/service"
 )
 
@@ -61,4 +63,29 @@ func (sc *storeClient) Rollback() error {
 		return tx.Rollback()
 	}
 	return errInvalidRollback
+}
+
+// gameDB denotes a school data in the store.
+type gameDB struct {
+	ID         int64      `db:"id"`
+	GameNames  string     `db:"game_names"`
+	GameIcons  string     `db:"game_icons"`
+	CreateTime time.Time  `db:"create_time"`
+	UpdateTime *time.Time `db:"update_time"`
+}
+
+// format formats database struct into domain struct.
+func (gdb *gameDB) format() game.Game {
+	g := game.Game{
+		ID:         gdb.ID,
+		GameNames:  gdb.GameNames,
+		GameIcons:  gdb.GameIcons,
+		CreateTime: gdb.CreateTime,
+	}
+
+	if gdb.UpdateTime != nil {
+		g.UpdateTime = *gdb.UpdateTime
+	}
+
+	return g
 }
