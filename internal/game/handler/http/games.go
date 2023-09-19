@@ -20,10 +20,106 @@ type gamesHandler struct {
 
 func (h *gamesHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
+	case http.MethodGet:
+		h.handleGetAllGames(w, r)
 	case http.MethodPost:
 		h.handleCreateGame(w, r)
 	default:
 		helper.WriteErrorResponse(w, http.StatusMethodNotAllowed, []string{errMethodNotAllowed.Error()})
+	}
+}
+
+func (h *gamesHandler) handleGetAllGames(w http.ResponseWriter, r *http.Request) {
+	// add timeout to context
+	ctx, cancel := context.WithTimeout(r.Context(), 3000*time.Millisecond)
+	defer cancel()
+
+	var (
+		err        error           // stores error in this handler
+		source     string          // stores request source
+		resBody    []byte          // stores response body to write
+		statusCode = http.StatusOK // stores response status code
+	)
+
+	// write response
+	defer func() {
+		// error
+		if err != nil {
+			log.Printf("[Game HTTP][handleGetAllGames] Failed to get all games. Source: %s, Err: %s\n", source, err.Error())
+			helper.WriteErrorResponse(w, statusCode, []string{err.Error()})
+			return
+		}
+		// success
+		helper.WriteResponse(w, resBody, statusCode, helper.JSONContentTypeDecorator)
+	}()
+
+	// prepare channels for main go routine
+	resChan := make(chan []game.Game, 1)
+	errChan := make(chan error, 1)
+
+	go func() {
+		// get token from header
+		token, err := helper.GetBearerTokenFromHeader(r)
+		if err != nil {
+			statusCode = http.StatusBadRequest
+			errChan <- errInvalidToken
+			return
+		}
+
+		// check access token
+		err = checkAccessToken(ctx, h.admin, token, "handleGetAllGames")
+		if err != nil {
+			statusCode = http.StatusUnauthorized
+			errChan <- err
+			return
+		}
+
+		// TODO: add authorization flow with roles
+
+		res, err := h.game.GetAllGames(ctx)
+		if err != nil {
+			// determine error and status code, by default its internal error
+			parsedErr := errInternalServer
+			statusCode = http.StatusInternalServerError
+			if v, ok := mapHTTPError[err]; ok {
+				parsedErr = v
+				statusCode = http.StatusBadRequest
+			}
+
+			// log the actual error if its internal error
+			if statusCode == http.StatusInternalServerError {
+				log.Printf("[Game HTTP][handleGetAllGames] Internal error from GetAllGames. Err: %s\n", err.Error())
+			}
+
+			errChan <- parsedErr
+			return
+		}
+
+		resChan <- res
+	}()
+
+	// wait and handle main go routine
+	select {
+	case <-ctx.Done():
+		statusCode = http.StatusGatewayTimeout
+		err = errRequestTimeout
+	case err = <-errChan:
+	case res := <-resChan:
+		// format each games
+		games := make([]gameHTTP, 0)
+		for _, r := range res {
+			var g gameHTTP
+			g, err = formatGame(r)
+			if err != nil {
+				return
+			}
+			games = append(games, g)
+		}
+
+		// construct response data
+		resBody, err = json.Marshal(helper.ResponseEnvelope{
+			Data: games,
+		})
 	}
 }
 
