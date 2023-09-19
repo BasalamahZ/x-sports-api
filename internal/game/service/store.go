@@ -21,4 +21,7 @@ type PGStoreClient interface {
 	// CreateGame creates a new game and return the
 	// created game ID.
 	CreateGame(ctx context.Context, game game.Game) (int64, error)
+
+	// GetAllGames returns all games.
+	GetAllGames(ctx context.Context) ([]game.Game, error)
 }

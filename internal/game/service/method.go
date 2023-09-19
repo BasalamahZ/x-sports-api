@@ -13,12 +13,7 @@ func (s *service) CreateGame(ctx context.Context, reqGame game.Game) (int64, err
 		return 0, err
 	}
 
-	// these value should be same for all users
-	var (
-		createTime = s.timeNow()
-	)
-
-	reqGame.CreateTime = createTime
+	reqGame.CreateTime = s.timeNow()
 
 	// get pg store client without using transaction
 	pgStoreClient, err := s.pgStore.NewClient(true)
@@ -32,6 +27,22 @@ func (s *service) CreateGame(ctx context.Context, reqGame game.Game) (int64, err
 	}
 
 	return gameID, nil
+}
+
+func (s *service) GetAllGames(ctx context.Context) ([]game.Game, error) {
+	// get pg store client using transaction
+	pgStoreClient, err := s.pgStore.NewClient(false)
+	if err != nil {
+		return nil, err
+	}
+
+	// get all games from postgre
+	games, err := pgStoreClient.GetAllGames(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return games, nil
 }
 
 // validateGame validates fields of the given Game
