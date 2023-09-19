@@ -1,5 +1,6 @@
 name: Deploy Api X-Sports
-on: [workflow_dispatch]
+on: 
+  workflow_dispatch:
   push:
     branches: [master]
 jobs:
