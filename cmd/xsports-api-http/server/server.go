@@ -19,6 +19,10 @@ import (
 	gamehttphandler "github.com/x-sports/internal/game/handler/http"
 	gameservice "github.com/x-sports/internal/game/service"
 	gamepgstore "github.com/x-sports/internal/game/store/postgresql"
+	"github.com/x-sports/internal/team"
+	teamhttphandler "github.com/x-sports/internal/team/handler/http"
+	teamservice "github.com/x-sports/internal/team/service"
+	teampgstore "github.com/x-sports/internal/team/store/postgresql"
 )
 
 // Following constants are the possible exit code returned
@@ -64,6 +68,8 @@ func new() (*server, error) {
 
 	// connect to dabatabase
 	db, err := sqlx.Connect("postgres", config.BaseConfig())
+	fmt.Println(db, "db")
+	fmt.Println(config.BaseConfig(), "config.BaseConfig()")
 	if err != nil {
 		log.Printf("[xsports-api-http] failed to connect database: %s\n", err.Error())
 		return nil, fmt.Errorf("failed to connect database: %s", err.Error())
@@ -107,6 +113,22 @@ func new() (*server, error) {
 		}
 	}
 
+	// initialize team service
+	var teamSvc team.Service
+	{
+		pgStore, err := teampgstore.New(db)
+		if err != nil {
+			log.Printf("[team-api-http] failed to initialize team postgresql store: %s\n", err.Error())
+			return nil, fmt.Errorf("failed to initialize team postgresql store: %s", err.Error())
+		}
+
+		teamSvc, err = teamservice.New(pgStore)
+		if err != nil {
+			log.Printf("[team-api-http] failed to initialize team service: %s\n", err.Error())
+			return nil, fmt.Errorf("failed to initialize team service: %s", err.Error())
+		}
+	}
+
 	// initialize admin HTTP handler
 	{
 		identities := []adminhttphandler.HandlerIdentity{
@@ -135,6 +157,21 @@ func new() (*server, error) {
 		}
 
 		s.handlers = append(s.handlers, gameHTTP)
+	}
+
+	// initialize team HTTP handler
+	{
+		identities := []teamhttphandler.HandlerIdentity{
+			teamhttphandler.HandlerTeams,
+		}
+
+		teamHTTP, err := teamhttphandler.New(teamSvc, adminSvc, identities)
+		if err != nil {
+			log.Printf("[team-api-http] failed to initialize team http handlers: %s\n", err.Error())
+			return nil, fmt.Errorf("failed to initialize team http handlers: %s", err.Error())
+		}
+
+		s.handlers = append(s.handlers, teamHTTP)
 	}
 
 	return s, nil
