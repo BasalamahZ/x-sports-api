@@ -16,7 +16,7 @@ func (s *service) CreateGame(ctx context.Context, reqGame game.Game) (int64, err
 	reqGame.CreateTime = s.timeNow()
 
 	// get pg store client without using transaction
-	pgStoreClient, err := s.pgStore.NewClient(true)
+	pgStoreClient, err := s.pgStore.NewClient(false)
 	if err != nil {
 		return 0, err
 	}
