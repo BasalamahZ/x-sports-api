@@ -71,6 +71,7 @@ type teamDB struct {
 	TeamNames  string     `db:"team_names"`
 	GameID     int64      `db:"game_id"`
 	GameNames  string     `db:"game_names"`
+	GameIcons  string     `db:"game_icons"`
 	CreateTime time.Time  `db:"create_time"`
 	UpdateTime *time.Time `db:"update_time"`
 }
@@ -82,6 +83,7 @@ func (tdb *teamDB) format() team.Team {
 		TeamNames:  tdb.TeamNames,
 		GameID:     tdb.GameID,
 		GameNames:  tdb.GameNames,
+		GameIcons:  tdb.GameIcons,
 		CreateTime: tdb.CreateTime,
 	}
 

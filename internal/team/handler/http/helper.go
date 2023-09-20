@@ -12,5 +12,6 @@ func formatTeam(t team.Team) (teamHTTP, error) {
 		TeamNames: &t.TeamNames,
 		GameID:    &t.GameID,
 		GameNames: &t.GameNames,
+		GameIcons: &t.GameIcons,
 	}, nil
 }

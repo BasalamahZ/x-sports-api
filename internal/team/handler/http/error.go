@@ -3,7 +3,7 @@ package http
 import (
 	"errors"
 
-	"github.com/x-sports/internal/game"
+	"github.com/x-sports/internal/team"
 )
 
 // Followings are the known errors from Game HTTP handlers.
@@ -20,13 +20,13 @@ var (
 	// invalid.
 	errInvalidToken = errors.New("INVALID_TOKEN")
 
-	// errInvalidGameNames is returned when the given game names is
+	// errInvalidTeamNames is returned when the given team names is
 	// invalid.
-	errInvalidGameNames = errors.New("INVALID_GAME_NAMES")
+	errInvalidTeamNames = errors.New("INVALID_TEAM_NAMES")
 
-	// errInvalidGameIcons is returned when the given game icons is
+	// errInvalidGameID is returned when the given game ID is
 	// invalid.
-	errInvalidGameIcons = errors.New("INVALID_GAME_ICONS")
+	errInvalidGameID = errors.New("INVALID_GAME_ID")
 
 	// errMethodNotAllowed is returned when accessing not
 	// allowed HTTP method.
@@ -49,7 +49,7 @@ var (
 	// here, and the handler should just return `errInternal`
 	// as the error instead
 	mapHTTPError = map[error]error{
-		game.ErrInvalidGameNames: errInvalidGameNames,
-		game.ErrInvalidGameIcons: errInvalidGameIcons,
+		team.ErrInvalidTeamNames: errInvalidTeamNames,
+		team.ErrInvalidGameID:    errInvalidGameID,
 	}
 )

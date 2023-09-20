@@ -19,6 +19,10 @@ import (
 	gamehttphandler "github.com/x-sports/internal/game/handler/http"
 	gameservice "github.com/x-sports/internal/game/service"
 	gamepgstore "github.com/x-sports/internal/game/store/postgresql"
+	"github.com/x-sports/internal/match"
+	matchhttphandler "github.com/x-sports/internal/match/handler/http"
+	matchservice "github.com/x-sports/internal/match/service"
+	matchpgstore "github.com/x-sports/internal/match/store/postgresql"
 	"github.com/x-sports/internal/team"
 	teamhttphandler "github.com/x-sports/internal/team/handler/http"
 	teamservice "github.com/x-sports/internal/team/service"
@@ -68,8 +72,6 @@ func new() (*server, error) {
 
 	// connect to dabatabase
 	db, err := sqlx.Connect("postgres", config.BaseConfig())
-	fmt.Println(db, "db")
-	fmt.Println(config.BaseConfig(), "config.BaseConfig()")
 	if err != nil {
 		log.Printf("[xsports-api-http] failed to connect database: %s\n", err.Error())
 		return nil, fmt.Errorf("failed to connect database: %s", err.Error())
@@ -129,6 +131,22 @@ func new() (*server, error) {
 		}
 	}
 
+	// initialize match service
+	var matchSvc match.Service
+	{
+		pgStore, err := matchpgstore.New(db)
+		if err != nil {
+			log.Printf("[match-api-http] failed to initialize match postgresql store: %s\n", err.Error())
+			return nil, fmt.Errorf("failed to initialize match postgresql store: %s", err.Error())
+		}
+
+		matchSvc, err = matchservice.New(pgStore)
+		if err != nil {
+			log.Printf("[match-api-http] failed to initialize match service: %s\n", err.Error())
+			return nil, fmt.Errorf("failed to initialize match service: %s", err.Error())
+		}
+	}
+
 	// initialize admin HTTP handler
 	{
 		identities := []adminhttphandler.HandlerIdentity{
@@ -172,6 +190,22 @@ func new() (*server, error) {
 		}
 
 		s.handlers = append(s.handlers, teamHTTP)
+	}
+
+	// initialize match HTTP handler
+	{
+		identities := []matchhttphandler.HandlerIdentity{
+			matchhttphandler.HandlerMatch,
+			matchhttphandler.HandlerMatchs,
+		}
+
+		matchHTTP, err := matchhttphandler.New(matchSvc, adminSvc, identities)
+		if err != nil {
+			log.Printf("[match-api-http] failed to initialize match http handlers: %s\n", err.Error())
+			return nil, fmt.Errorf("failed to initialize match http handlers: %s", err.Error())
+		}
+
+		s.handlers = append(s.handlers, matchHTTP)
 	}
 
 	return s, nil
