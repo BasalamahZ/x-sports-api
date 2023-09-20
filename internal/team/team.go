@@ -19,6 +19,7 @@ type Team struct {
 	TeamNames  string
 	GameID     int64
 	GameNames  string // derived
+	GameIcons  string // derived
 	CreateTime time.Time
 	UpdateTime time.Time
 }
