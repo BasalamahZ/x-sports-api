@@ -21,8 +21,9 @@ const queryGetTeams = `
 		t.team_names,
 		t.game_id,
 		g.game_names,
-		g.create_time, 
-		g.update_time
+		g.game_icons,
+		t.create_time, 
+		t.update_time
 	FROM
 		team t
 	INNER JOIN
