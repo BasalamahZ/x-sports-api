@@ -69,6 +69,7 @@ func (sc *storeClient) Rollback() error {
 type teamDB struct {
 	ID         int64      `db:"id"`
 	TeamNames  string     `db:"team_names"`
+	TeamIcons  string     `db:"team_icons"`
 	GameID     int64      `db:"game_id"`
 	GameNames  string     `db:"game_names"`
 	GameIcons  string     `db:"game_icons"`
@@ -81,6 +82,7 @@ func (tdb *teamDB) format() team.Team {
 	t := team.Team{
 		ID:         tdb.ID,
 		TeamNames:  tdb.TeamNames,
+		TeamIcons:  tdb.TeamIcons,
 		GameID:     tdb.GameID,
 		GameNames:  tdb.GameNames,
 		GameIcons:  tdb.GameIcons,

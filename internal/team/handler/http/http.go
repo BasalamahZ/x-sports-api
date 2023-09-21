@@ -100,6 +100,7 @@ func (h *Handler) Start(multiplexer *mux.Router) error {
 type teamHTTP struct {
 	ID        *int64  `json:"id"`
 	TeamNames *string `json:"team_names"`
+	TeamIcons *string `json:"team_icons"`
 	GameID    *int64  `json:"game_id"`
 	GameNames *string `json:"game_names"`
 	GameIcons *string `json:"game_icons"`

@@ -10,6 +10,7 @@ func formatTeam(t team.Team) (teamHTTP, error) {
 	return teamHTTP{
 		ID:        &t.ID,
 		TeamNames: &t.TeamNames,
+		TeamIcons: &t.TeamIcons,
 		GameID:    &t.GameID,
 		GameNames: &t.GameNames,
 		GameIcons: &t.GameIcons,

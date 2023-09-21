@@ -239,12 +239,12 @@ func parseTeamFromCreateRequest(th teamHTTP) (team.Team, error) {
 		result.TeamNames = *th.TeamNames
 	}
 
-	if th.GameID != nil {
-		result.GameID = *th.GameID
+	if th.TeamIcons != nil {
+		result.TeamIcons = *th.TeamIcons
 	}
 
-	if th.GameNames != nil {
-		result.GameNames = *th.GameNames
+	if th.GameID != nil {
+		result.GameID = *th.GameID
 	}
 
 	return result, nil
