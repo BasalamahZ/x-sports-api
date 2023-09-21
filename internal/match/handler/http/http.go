@@ -118,11 +118,14 @@ type matchHTTP struct {
 	TournamentNames *string  `json:"tournament_names"`
 	GameID          *int64   `json:"game_id"`
 	GameNames       *string  `json:"game_names"`
+	GameIcons       *string  `json:"game_icons"`
 	TeamAID         *int64   `json:"team_a_id"`
 	TeamANames      *string  `json:"team_a_names"`
+	TeamAIcons      *string  `json:"team_a_icons"`
 	TeamAOdds       *float32 `json:"team_a_odds"`
 	TeamBID         *int64   `json:"team_b_id"`
 	TeamBNames      *string  `json:"team_b_names"`
+	TeamBIcons      *string  `json:"team_b_icons"`
 	TeamBOdds       *float32 `json:"team_b_odds"`
 	Date            *string  `json:"date"`
 	MatchLink       *string  `json:"match_link"`
