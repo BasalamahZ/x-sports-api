@@ -5,10 +5,12 @@ const queryCreateTeam = `
 		team
 	(
 		team_names,
+		team_icons,
 		game_id,
 		create_time
 	) VALUES (
 		:team_names,
+		:team_icons,
 		:game_id,
 		:create_time
 	)  RETURNING
@@ -19,6 +21,7 @@ const queryGetTeams = `
 	SELECT
 		t.id,
 		t.team_names,
+		t.team_icons,
 		t.game_id,
 		g.game_names,
 		g.game_icons,

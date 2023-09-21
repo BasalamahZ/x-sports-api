@@ -6,7 +6,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/x-sports/internal/admin"
-	"github.com/x-sports/internal/match"
+	"github.com/x-sports/internal/news"
 )
 
 var (
@@ -14,13 +14,13 @@ var (
 )
 
 // dateFormat denotes the standard date format used in
-// match HTTP request and response.
+// news HTTP request and response.
 var dateFormat = "2 January 2006"
 
 // Handler contains admin HTTP-handlers.
 type Handler struct {
 	handlers map[string]*handler
-	match    match.Service
+	news     news.Service
 	admin    admin.Service
 }
 
@@ -38,26 +38,26 @@ type HandlerIdentity struct {
 
 // Followings are the known HTTP handler identities
 var (
-	// HandlerMatch denotes HTTP handler to interact
-	// with a match
-	HandlerMatch = HandlerIdentity{
-		Name: "match",
-		URL:  "/matchs/{id}",
+	// HandlerNews denotes HTTP handler to interact
+	// with a news
+	HandlerNews = HandlerIdentity{
+		Name: "news",
+		URL:  "/news/{id}",
 	}
 
-	// HandlerMatchs denotes HTTP handler to interact
-	// with a matchs
-	HandlerMatchs = HandlerIdentity{
-		Name: "matchs",
-		URL:  "/matchs",
+	// HandlerNewss denotes HTTP handler to interact
+	// with a newss
+	HandlerNewss = HandlerIdentity{
+		Name: "newss",
+		URL:  "/news",
 	}
 )
 
 // New creates a new Handler.
-func New(match match.Service, admin admin.Service, identities []HandlerIdentity) (*Handler, error) {
+func New(news news.Service, admin admin.Service, identities []HandlerIdentity) (*Handler, error) {
 	h := &Handler{
 		handlers: make(map[string]*handler),
-		match:    match,
+		news:     news,
 		admin:    admin,
 	}
 
@@ -87,14 +87,14 @@ func New(match match.Service, admin admin.Service, identities []HandlerIdentity)
 func (h *Handler) createHTTPHandler(configName string) (http.Handler, error) {
 	var httpHandler http.Handler
 	switch configName {
-	case HandlerMatch.Name:
-		httpHandler = &matchHandler{
-			match: h.match,
+	case HandlerNews.Name:
+		httpHandler = &newsHandler{
+			news:  h.news,
 			admin: h.admin,
 		}
-	case HandlerMatchs.Name:
-		httpHandler = &matchsHandler{
-			match: h.match,
+	case HandlerNewss.Name:
+		httpHandler = &newssHandler{
+			news:  h.news,
 			admin: h.admin,
 		}
 	default:
@@ -111,24 +111,15 @@ func (h *Handler) Start(multiplexer *mux.Router) error {
 	return nil
 }
 
-// matchHTTP denotes user object in HTTP request or response
+// newsHTTP denotes user object in HTTP request or response
 // body.
-type matchHTTP struct {
-	ID              *int64   `json:"id"`
-	TournamentNames *string  `json:"tournament_names"`
-	GameID          *int64   `json:"game_id"`
-	GameNames       *string  `json:"game_names"`
-	GameIcons       *string  `json:"game_icons"`
-	TeamAID         *int64   `json:"team_a_id"`
-	TeamANames      *string  `json:"team_a_names"`
-	TeamAIcons      *string  `json:"team_a_icons"`
-	TeamAOdds       *float32 `json:"team_a_odds"`
-	TeamBID         *int64   `json:"team_b_id"`
-	TeamBNames      *string  `json:"team_b_names"`
-	TeamBIcons      *string  `json:"team_b_icons"`
-	TeamBOdds       *float32 `json:"team_b_odds"`
-	Date            *string  `json:"date"`
-	MatchLink       *string  `json:"match_link"`
-	Status          *string  `json:"status"`
-	Winner          *int64   `json:"winner"`
+type newsHTTP struct {
+	ID          *int64  `json:"id"`
+	Title       *string `json:"title"`
+	GameID      *int64  `json:"game_id"`
+	GameNames   *string `json:"game_names"`
+	GameIcons   *string `json:"game_icons"`
+	Description *string `json:"description"`
+	ImageNews   *string `json:"image_news"`
+	Date        *string `json:"date"`
 }

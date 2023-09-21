@@ -11,6 +11,7 @@ func (sc *storeClient) CreateTeam(ctx context.Context, reqTeam team.Team) (int64
 	// construct arguments filled with fields for the query
 	argsKV := map[string]interface{}{
 		"team_names":  reqTeam.TeamNames,
+		"team_icons":  reqTeam.TeamIcons,
 		"game_id":     reqTeam.GameID,
 		"create_time": reqTeam.CreateTime,
 	}

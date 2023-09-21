@@ -6,7 +6,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/x-sports/internal/admin"
-	"github.com/x-sports/internal/team"
 )
 
 var (
@@ -16,7 +15,6 @@ var (
 // Handler contains admin HTTP-handlers.
 type Handler struct {
 	handlers map[string]*handler
-	team     team.Service
 	admin    admin.Service
 }
 
@@ -34,19 +32,18 @@ type HandlerIdentity struct {
 
 // Followings are the known HTTP handler identities
 var (
-	// HandlerTeams denotes HTTP handler to interact
-	// with a teams
-	HandlerTeams = HandlerIdentity{
-		Name: "teams",
-		URL:  "/teams",
+	// HandlerUpload denotes HTTP handler to interact
+	// with a upload
+	HandlerUpload = HandlerIdentity{
+		Name: "upload",
+		URL:  "/upload",
 	}
 )
 
 // New creates a new Handler.
-func New(team team.Service, admin admin.Service, identities []HandlerIdentity) (*Handler, error) {
+func New(admin admin.Service, identities []HandlerIdentity) (*Handler, error) {
 	h := &Handler{
 		handlers: make(map[string]*handler),
-		team:     team,
 		admin:    admin,
 	}
 
@@ -76,9 +73,8 @@ func New(team team.Service, admin admin.Service, identities []HandlerIdentity) (
 func (h *Handler) createHTTPHandler(configName string) (http.Handler, error) {
 	var httpHandler http.Handler
 	switch configName {
-	case HandlerTeams.Name:
-		httpHandler = &teamsHandler{
-			team:  h.team,
+	case HandlerUpload.Name:
+		httpHandler = &uploadHandler{
 			admin: h.admin,
 		}
 	default:
@@ -93,15 +89,4 @@ func (h *Handler) Start(multiplexer *mux.Router) error {
 		multiplexer.Handle(handler.identity.URL, handler.h)
 	}
 	return nil
-}
-
-// teamHTTP denotes user object in HTTP request or response
-// body.
-type teamHTTP struct {
-	ID        *int64  `json:"id"`
-	TeamNames *string `json:"team_names"`
-	TeamIcons *string `json:"team_icons"`
-	GameID    *int64  `json:"game_id"`
-	GameNames *string `json:"game_names"`
-	GameIcons *string `json:"game_icons"`
 }

@@ -23,10 +23,15 @@ import (
 	matchhttphandler "github.com/x-sports/internal/match/handler/http"
 	matchservice "github.com/x-sports/internal/match/service"
 	matchpgstore "github.com/x-sports/internal/match/store/postgresql"
+	"github.com/x-sports/internal/news"
+	newshttphandler "github.com/x-sports/internal/news/handler/http"
+	newsservice "github.com/x-sports/internal/news/service"
+	newspgstore "github.com/x-sports/internal/news/store/postgresql"
 	"github.com/x-sports/internal/team"
 	teamhttphandler "github.com/x-sports/internal/team/handler/http"
 	teamservice "github.com/x-sports/internal/team/service"
 	teampgstore "github.com/x-sports/internal/team/store/postgresql"
+	uploadhttphandler "github.com/x-sports/internal/upload/handler/http"
 )
 
 // Following constants are the possible exit code returned
@@ -147,6 +152,22 @@ func new() (*server, error) {
 		}
 	}
 
+	// initialize news service
+	var newsSvc news.Service
+	{
+		pgStore, err := newspgstore.New(db)
+		if err != nil {
+			log.Printf("[news-api-http] failed to initialize news postgresql store: %s\n", err.Error())
+			return nil, fmt.Errorf("failed to initialize news postgresql store: %s", err.Error())
+		}
+
+		newsSvc, err = newsservice.New(pgStore)
+		if err != nil {
+			log.Printf("[news-api-http] failed to initialize news service: %s\n", err.Error())
+			return nil, fmt.Errorf("failed to initialize news service: %s", err.Error())
+		}
+	}
+
 	// initialize admin HTTP handler
 	{
 		identities := []adminhttphandler.HandlerIdentity{
@@ -206,6 +227,37 @@ func new() (*server, error) {
 		}
 
 		s.handlers = append(s.handlers, matchHTTP)
+	}
+
+	// initialize news HTTP handler
+	{
+		identities := []newshttphandler.HandlerIdentity{
+			newshttphandler.HandlerNews,
+			newshttphandler.HandlerNewss,
+		}
+
+		newsHTTP, err := newshttphandler.New(newsSvc, adminSvc, identities)
+		if err != nil {
+			log.Printf("[news-api-http] failed to initialize news http handlers: %s\n", err.Error())
+			return nil, fmt.Errorf("failed to initialize news http handlers: %s", err.Error())
+		}
+
+		s.handlers = append(s.handlers, newsHTTP)
+	}
+
+	// initialize upload HTTP handler
+	{
+		identities := []uploadhttphandler.HandlerIdentity{
+			uploadhttphandler.HandlerUpload,
+		}
+
+		uploadHTTP, err := uploadhttphandler.New(adminSvc, identities)
+		if err != nil {
+			log.Printf("[upload-api-http] failed to initialize upload http handlers: %s\n", err.Error())
+			return nil, fmt.Errorf("failed to initialize upload http handlers: %s", err.Error())
+		}
+
+		s.handlers = append(s.handlers, uploadHTTP)
 	}
 
 	return s, nil

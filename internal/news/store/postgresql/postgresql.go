@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/x-sports/internal/team"
-	"github.com/x-sports/internal/team/service"
+	"github.com/x-sports/internal/news"
+	"github.com/x-sports/internal/news/service"
 )
 
 var (
@@ -14,12 +14,12 @@ var (
 	errInvalidRollback = errors.New("cannot do rollback on non-transactional querier")
 )
 
-// store implements team/service.PGStore
+// store implements news/service.PGStore
 type store struct {
 	db *sqlx.DB
 }
 
-// storeClient implements team/service.PGStoreClient
+// storeClient implements news/service.PGStoreClient
 type storeClient struct {
 	q sqlx.Ext
 }
@@ -65,33 +65,37 @@ func (sc *storeClient) Rollback() error {
 	return errInvalidRollback
 }
 
-// teamDB denotes a school data in the store.
-type teamDB struct {
-	ID         int64      `db:"id"`
-	TeamNames  string     `db:"team_names"`
-	TeamIcons  string     `db:"team_icons"`
-	GameID     int64      `db:"game_id"`
-	GameNames  string     `db:"game_names"`
-	GameIcons  string     `db:"game_icons"`
-	CreateTime time.Time  `db:"create_time"`
-	UpdateTime *time.Time `db:"update_time"`
+// newsDB denotes a school data in the store.
+type newsDB struct {
+	ID          int64      `db:"id"`
+	Title       string     `db:"title"`
+	GameID      int64      `db:"game_id"`
+	GameNames   string     `db:"game_names"`
+	GameIcons   string     `db:"game_icons"`
+	Description string     `db:"description"`
+	ImageNews   string     `db:"image_news"`
+	Date        time.Time  `db:"date"`
+	CreateTime  time.Time  `db:"create_time"`
+	UpdateTime  *time.Time `db:"update_time"`
 }
 
 // format formats database struct into domain struct.
-func (tdb *teamDB) format() team.Team {
-	t := team.Team{
-		ID:         tdb.ID,
-		TeamNames:  tdb.TeamNames,
-		TeamIcons:  tdb.TeamIcons,
-		GameID:     tdb.GameID,
-		GameNames:  tdb.GameNames,
-		GameIcons:  tdb.GameIcons,
-		CreateTime: tdb.CreateTime,
+func (ndb *newsDB) format() news.News {
+	n := news.News{
+		ID:          ndb.ID,
+		Title:       ndb.Title,
+		GameID:      ndb.GameID,
+		GameNames:   ndb.GameNames,
+		GameIcons:   ndb.GameIcons,
+		Description: ndb.Description,
+		ImageNews:   ndb.ImageNews,
+		Date:        ndb.Date,
+		CreateTime:  ndb.CreateTime,
 	}
 
-	if tdb.UpdateTime != nil {
-		t.UpdateTime = *tdb.UpdateTime
+	if ndb.UpdateTime != nil {
+		n.UpdateTime = *ndb.UpdateTime
 	}
 
-	return t
+	return n
 }

@@ -52,6 +52,10 @@ func validateTeam(reqTeam team.Team) error {
 		return team.ErrInvalidTeamNames
 	}
 
+	if reqTeam.TeamIcons == "" {
+		return team.ErrInvalidTeamIcons
+	}
+
 	if reqTeam.GameID <= 0 {
 		return team.ErrInvalidGameID
 	}

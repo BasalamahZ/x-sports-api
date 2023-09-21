@@ -17,6 +17,7 @@ type Service interface {
 type Team struct {
 	ID         int64
 	TeamNames  string
+	TeamIcons  string
 	GameID     int64
 	GameNames  string // derived
 	GameIcons  string // derived

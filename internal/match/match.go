@@ -32,11 +32,14 @@ type Match struct {
 	TournamentNames string
 	GameID          int64
 	GameNames       string // derived
+	GameIcons       string // derived
 	TeamAID         int64
 	TeamANames      string // derived
+	TeamAIcons      string // derived
 	TeamAOdds       float32
 	TeamBID         int64
 	TeamBNames      string // derived
+	TeamBIcons      string // derived
 	TeamBOdds       float32
 	Date            time.Time
 	MatchLink       string

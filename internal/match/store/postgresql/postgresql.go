@@ -71,11 +71,14 @@ type matchDB struct {
 	TournamentNames string       `db:"tournament_names"`
 	GameID          int64        `db:"game_id"`
 	GameNames       string       `db:"game_names"`
+	GameIcons       string       `db:"game_icons"`
 	TeamAID         int64        `db:"team_a_id"`
 	TeamANames      string       `db:"team_a_names"`
+	TeamAIcons      string       `db:"team_a_icons"`
 	TeamAOdds       float32      `db:"team_a_odds"`
 	TeamBID         int64        `db:"team_b_id"`
 	TeamBNames      string       `db:"team_b_names"`
+	TeamBIcons      string       `db:"team_b_icons"`
 	TeamBOdds       float32      `db:"team_b_odds"`
 	Date            time.Time    `db:"date"`
 	MatchLink       string       `db:"match_link"`
@@ -92,11 +95,14 @@ func (mdb *matchDB) format() match.Match {
 		TournamentNames: mdb.TournamentNames,
 		GameID:          mdb.GameID,
 		GameNames:       mdb.GameNames,
+		GameIcons:       mdb.GameIcons,
 		TeamAID:         mdb.TeamAID,
 		TeamANames:      mdb.TeamANames,
+		TeamAIcons:      mdb.TeamAIcons,
 		TeamAOdds:       mdb.TeamAOdds,
 		TeamBID:         mdb.TeamBID,
 		TeamBNames:      mdb.TeamBNames,
+		TeamBIcons:      mdb.TeamBIcons,
 		TeamBOdds:       mdb.TeamBOdds,
 		Date:            mdb.Date,
 		Status:          mdb.Status,
