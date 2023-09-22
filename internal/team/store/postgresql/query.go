@@ -33,4 +33,18 @@ const queryGetTeams = `
 		game g
 	ON
 		t.game_id = g.id
+	%s
+`
+
+const queryUpdateTeam = `
+	UPDATE
+		team
+	SET
+		team_names = :team_names,
+		team_icons = :team_icons,
+		game_id = :game_id,
+		create_time = :create_time,
+		update_time = :update_time
+	WHERE
+		id = :id
 `

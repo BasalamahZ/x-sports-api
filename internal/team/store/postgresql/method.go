@@ -2,6 +2,7 @@ package postgresql
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/x-sports/internal/team"
@@ -38,8 +39,10 @@ func (sc *storeClient) CreateTeam(ctx context.Context, reqTeam team.Team) (int64
 }
 
 func (sc *storeClient) GetAllTeams(ctx context.Context) ([]team.Team, error) {
+	query := fmt.Sprintf(queryGetTeams, "")
+
 	// prepare query
-	query, args, err := sqlx.Named(queryGetTeams, map[string]interface{}{})
+	query, args, err := sqlx.Named(query, map[string]interface{}{})
 	if err != nil {
 		return nil, err
 	}
@@ -73,4 +76,44 @@ func (sc *storeClient) GetAllTeams(ctx context.Context) ([]team.Team, error) {
 	}
 
 	return teams, nil
+}
+
+func (sc *storeClient) UpdateTeam(ctx context.Context, reqTeam team.Team) error {
+	// construct arguments filled with fields for the query
+	argsKV := map[string]interface{}{
+		"id":          reqTeam.ID,
+		"team_names":  reqTeam.TeamNames,
+		"team_icons":  reqTeam.TeamIcons,
+		"game_id":     reqTeam.GameID,
+		"create_time": reqTeam.CreateTime,
+		"update_time": reqTeam.UpdateTime,
+	}
+
+	// prepare query
+	query, args, err := sqlx.Named(queryUpdateTeam, argsKV)
+	if err != nil {
+		return err
+	}
+	query, args, err = sqlx.In(query, args...)
+	if err != nil {
+		return err
+	}
+	query = sc.q.Rebind(query)
+
+	// execute query
+	_, err = sc.q.Exec(query, args...)
+	return err
+}
+
+func (sc *storeClient) GetTeamByID(ctx context.Context, teamID int64) (team.Team, error) {
+	query := fmt.Sprintf(queryGetTeams, "WHERE t.id = $1")
+
+	// query single row
+	var tdb teamDB
+	err := sc.q.QueryRowx(query, teamID).StructScan(&tdb)
+	if err != nil {
+		return team.Team{}, err
+	}
+
+	return tdb.format(), nil
 }

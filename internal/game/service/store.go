@@ -24,4 +24,17 @@ type PGStoreClient interface {
 
 	// GetAllGames returns all games.
 	GetAllGames(ctx context.Context) ([]game.Game, error)
+
+	// GetGameByID returns a game with the given
+	// game ID.
+	GetGameByID(ctx context.Context, gameID int64) (game.Game, error)
+
+	// UpdateGame updates existing game with the given
+	// game data.
+	//
+	// UpdateGame do updates on all main attributes
+	// except ID, CreateBy, and CreateTime. So, make sure to
+	// use current values in the given data if do not want
+	// to update some specific attributes.
+	UpdateGame(ctx context.Context, game game.Game) error
 }

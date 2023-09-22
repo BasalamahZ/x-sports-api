@@ -34,6 +34,13 @@ type HandlerIdentity struct {
 
 // Followings are the known HTTP handler identities
 var (
+	// HandlerTeam denotes HTTP handler to interact
+	// with a team
+	HandlerTeam = HandlerIdentity{
+		Name: "team",
+		URL:  "/teams/{id}",
+	}
+
 	// HandlerTeams denotes HTTP handler to interact
 	// with a teams
 	HandlerTeams = HandlerIdentity{
@@ -78,6 +85,11 @@ func (h *Handler) createHTTPHandler(configName string) (http.Handler, error) {
 	switch configName {
 	case HandlerTeams.Name:
 		httpHandler = &teamsHandler{
+			team:  h.team,
+			admin: h.admin,
+		}
+	case HandlerTeam.Name:
+		httpHandler = &teamHandler{
 			team:  h.team,
 			admin: h.admin,
 		}

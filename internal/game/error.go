@@ -10,4 +10,8 @@ var (
 	// ErrInvalidGameIcons is returned when the given game icons is
 	// invalid.
 	ErrInvalidGameIcons = errors.New("invalid game icons")
+
+	// ErrInvalidGameID is returned when the given game id is
+	// invalid.
+	ErrInvalidGameID = errors.New("invalid game id")
 )

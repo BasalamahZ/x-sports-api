@@ -186,6 +186,7 @@ func new() (*server, error) {
 	// initialize game HTTP handler
 	{
 		identities := []gamehttphandler.HandlerIdentity{
+			gamehttphandler.HandlerGame,
 			gamehttphandler.HandlerGames,
 		}
 
@@ -201,6 +202,7 @@ func new() (*server, error) {
 	// initialize team HTTP handler
 	{
 		identities := []teamhttphandler.HandlerIdentity{
+			teamhttphandler.HandlerTeam,
 			teamhttphandler.HandlerTeams,
 		}
 
@@ -281,7 +283,7 @@ func (s *server) start() int {
 
 	// endpoint checker
 	appMux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "Hello world! Auto Deploy On, INPO 60 RIBUNYA CAIRINN DONGG!!! @xsports")
+		fmt.Fprint(w, "Hello world! Auto Deploy On @xsports")
 	})
 
 	// use middlewares to app mux only
