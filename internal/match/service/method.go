@@ -29,7 +29,7 @@ func (s *service) CreateMatch(ctx context.Context, reqMatch match.Match) (int64,
 	return matchID, nil
 }
 
-func (s *service) GetAllMatchs(ctx context.Context, gameID int64) ([]match.Match, error) {
+func (s *service) GetAllMatchs(ctx context.Context, gameID int64, status match.Status) ([]match.Match, error) {
 	// get pg store client without using transaction
 	pgStoreClient, err := s.pgStore.NewClient(false)
 	if err != nil {
@@ -37,7 +37,7 @@ func (s *service) GetAllMatchs(ctx context.Context, gameID int64) ([]match.Match
 	}
 
 	// get all match from postgre
-	match, err := pgStoreClient.GetAllMatchs(ctx, gameID)
+	match, err := pgStoreClient.GetAllMatchs(ctx, gameID, status)
 	if err != nil {
 		return nil, err
 	}

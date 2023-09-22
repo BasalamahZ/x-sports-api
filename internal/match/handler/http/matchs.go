@@ -77,14 +77,14 @@ func (h *matchsHandler) handleGetAllMatchs(w http.ResponseWriter, r *http.Reques
 		}
 
 		// parsed filter
-		gameID, err := parseGetMatchsFilter(r.URL.Query())
+		gameID, status, err := parseGetMatchsFilter(r.URL.Query())
 		if err != nil {
 			statusCode = http.StatusBadRequest
 			errChan <- err
 			return
 		}
 
-		res, err := h.match.GetAllMatchs(ctx, gameID)
+		res, err := h.match.GetAllMatchs(ctx, gameID, status)
 		if err != nil {
 			// determine error and status code, by default its internal error
 			parsedErr := errInternalServer
@@ -131,17 +131,27 @@ func (h *matchsHandler) handleGetAllMatchs(w http.ResponseWriter, r *http.Reques
 	}
 }
 
-func parseGetMatchsFilter(request url.Values) (int64, error) {
+func parseGetMatchsFilter(request url.Values) (int64, match.Status, error) {
 	var gameID int64
 	if gameIDStr := request.Get("game_id"); gameIDStr != "" {
 		intSGameID, err := strconv.ParseInt(gameIDStr, 10, 64)
 		if err != nil {
-			return 0, errInvalidGameID
+			return 0, 0, errInvalidGameID
 		}
 		gameID = intSGameID
 	}
 
-	return gameID, nil
+	var status match.Status
+	if statusStr := request.Get("status"); statusStr != "" {
+		parseStatus, err := parseStatus(statusStr)
+		// intStatus, err := strconv.Atoi(statusStr)
+		if err != nil {
+			return 0, 0, errInvalidStatus
+		}
+		status = parseStatus
+	}
+
+	return gameID, status, nil
 }
 
 func (h *matchsHandler) handleCreateMatch(w http.ResponseWriter, r *http.Request) {
