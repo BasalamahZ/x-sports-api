@@ -24,4 +24,17 @@ const queryGetGames = `
 		g.update_time
 	FROM
 		game g
+	%s
+`
+
+const queryUpdateGame = `
+	UPDATE
+		game
+	SET
+		game_names = :game_names,
+		game_icons = :game_icons,
+		create_time = :create_time,
+		update_time = :update_time
+	WHERE
+		id = :id
 `

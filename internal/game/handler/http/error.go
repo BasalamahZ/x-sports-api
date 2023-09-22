@@ -20,6 +20,10 @@ var (
 	// invalid.
 	errInvalidToken = errors.New("INVALID_TOKEN")
 
+	// errInvalidGameID is returned when the given game id is
+	// invalid.
+	errInvalidGameID = errors.New("INVALID_GAME_ID")
+
 	// errInvalidGameNames is returned when the given game names is
 	// invalid.
 	errInvalidGameNames = errors.New("INVALID_GAME_NAMES")
@@ -51,5 +55,6 @@ var (
 	mapHTTPError = map[error]error{
 		game.ErrInvalidGameNames: errInvalidGameNames,
 		game.ErrInvalidGameIcons: errInvalidGameIcons,
+		game.ErrInvalidGameID:    errInvalidGameID,
 	}
 )

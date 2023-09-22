@@ -11,6 +11,10 @@ var (
 	// invalid.
 	ErrInvalidTeamIcons = errors.New("invalid team icons")
 
+	// ErrInvalidTeamID is returned when the given team id is
+	// invalid.
+	ErrInvalidTeamID = errors.New("invalid team id")
+
 	// ErrInvalidGameID is returned when the given game id is
 	// invalid.
 	ErrInvalidGameID = errors.New("invalid game id")

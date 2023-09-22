@@ -28,6 +28,10 @@ var (
 	// invalid.
 	errInvalidGameID = errors.New("INVALID_GAME_ID")
 
+	// errInvalidTeamID is returned when the given team ID is
+	// invalid.
+	errInvalidTeamID = errors.New("INVALID_TEAM_ID")
+
 	// errMethodNotAllowed is returned when accessing not
 	// allowed HTTP method.
 	errMethodNotAllowed = errors.New("METHOD_NOT_ALLOWED")
@@ -50,6 +54,7 @@ var (
 	// as the error instead
 	mapHTTPError = map[error]error{
 		team.ErrInvalidTeamNames: errInvalidTeamNames,
+		team.ErrInvalidTeamID:    errInvalidTeamID,
 		team.ErrInvalidGameID:    errInvalidGameID,
 	}
 )

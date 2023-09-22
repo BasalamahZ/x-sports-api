@@ -12,6 +12,19 @@ type Service interface {
 
 	// GetAllTeams returns all teams.
 	GetAllTeams(ctx context.Context) ([]Team, error)
+	
+	// GetTeamsByID returns a team with the given
+	// team ID.
+	GetTeamByID(ctx context.Context, teamID int64) (Team, error)
+
+	// UpdateTeam updates existing team with the given
+	// team data.
+	//
+	// Updateteams do updates on all main attributes
+	// except ID, CreateBy, and CreateTime. So, make sure to
+	// use current values in the given data if do not want
+	// to update some specific attributes.
+	UpdateTeam(ctx context.Context, team Team) error
 }
 
 type Team struct {

@@ -45,6 +45,47 @@ func (s *service) GetAllTeams(ctx context.Context) ([]team.Team, error) {
 	return teams, nil
 }
 
+func (s *service) UpdateTeam(ctx context.Context, reqTeam team.Team) error {
+	// validate field
+	err := validateTeam(reqTeam)
+	if err != nil {
+		return err
+	}
+
+	// modify fields
+	reqTeam.UpdateTime = s.timeNow()
+
+	// get pg store client using transaction
+	pgStoreClient, err := s.pgStore.NewClient(false)
+	if err != nil {
+		return err
+	}
+
+	// updates team in pgstore
+	err = pgStoreClient.UpdateTeam(ctx, reqTeam)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *service) GetTeamByID(ctx context.Context, teamID int64) (team.Team, error) {
+	// get pg store client without using transaction
+	pgStoreClient, err := s.pgStore.NewClient(false)
+	if err != nil {
+		return team.Team{}, err
+	}
+
+	// get Team from pgstore
+	result, err := pgStoreClient.GetTeamByID(ctx, teamID)
+	if err != nil {
+		return team.Team{}, err
+	}
+
+	return result, nil
+}
+
 // validateTeam validates fields of the given Team
 // whether its comply the predetermined rules.
 func validateTeam(reqTeam team.Team) error {
