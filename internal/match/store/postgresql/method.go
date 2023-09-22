@@ -51,7 +51,7 @@ func (sc *storeClient) CreateMatch(ctx context.Context, reqMatch match.Match) (i
 	return matchID, nil
 }
 
-func (sc *storeClient) GetAllMatchs(ctx context.Context, gameID int64) ([]match.Match, error) {
+func (sc *storeClient) GetAllMatchs(ctx context.Context, gameID int64, status match.Status) ([]match.Match, error) {
 	// define variables to custom query
 	argsKV := make(map[string]interface{})
 	addConditions := make([]string, 0)
@@ -59,6 +59,11 @@ func (sc *storeClient) GetAllMatchs(ctx context.Context, gameID int64) ([]match.
 	if gameID > 0 {
 		addConditions = append(addConditions, "m.game_id = :game_id")
 		argsKV["game_id"] = gameID
+	}
+
+	if status > 0 {
+		addConditions = append(addConditions, "m.status = :status")
+		argsKV["status"] = status
 	}
 
 	// construct strings to custom query

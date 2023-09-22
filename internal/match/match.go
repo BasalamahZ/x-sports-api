@@ -11,7 +11,7 @@ type Service interface {
 	CreateMatch(ctx context.Context, match Match) (int64, error)
 
 	// GetAllMatchs returns all matchs and filter by game id.
-	GetAllMatchs(ctx context.Context, gameID int64) ([]Match, error)
+	GetAllMatchs(ctx context.Context, gameID int64, status Status) ([]Match, error)
 
 	// GetMatchByID returns a match with the given
 	// match ID.

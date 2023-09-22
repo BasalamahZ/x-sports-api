@@ -130,7 +130,7 @@ func (h *uploadHandler) handleUpload(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		resChan <- res.URL
+		resChan <- res.SecureURL
 	}()
 
 	// wait and handle main go routine
