@@ -31,6 +31,10 @@ import (
 	teamhttphandler "github.com/x-sports/internal/team/handler/http"
 	teamservice "github.com/x-sports/internal/team/service"
 	teampgstore "github.com/x-sports/internal/team/store/postgresql"
+	"github.com/x-sports/internal/thread"
+	threadhttphandler "github.com/x-sports/internal/thread/handler/http"
+	threadservice "github.com/x-sports/internal/thread/service"
+	threadpgstore "github.com/x-sports/internal/thread/store/postgresql"
 	uploadhttphandler "github.com/x-sports/internal/upload/handler/http"
 )
 
@@ -168,6 +172,22 @@ func new() (*server, error) {
 		}
 	}
 
+	// initialize thread service
+	var threadSvc thread.Service
+	{
+		pgStore, err := threadpgstore.New(db)
+		if err != nil {
+			log.Printf("[thread-api-http] failed to initialize thread postgresql store: %s\n", err.Error())
+			return nil, fmt.Errorf("failed to initialize thread postgresql store: %s", err.Error())
+		}
+
+		threadSvc, err = threadservice.New(pgStore)
+		if err != nil {
+			log.Printf("[thread-api-http] failed to initialize thread service: %s\n", err.Error())
+			return nil, fmt.Errorf("failed to initialize thread service: %s", err.Error())
+		}
+	}
+
 	// initialize admin HTTP handler
 	{
 		identities := []adminhttphandler.HandlerIdentity{
@@ -260,6 +280,22 @@ func new() (*server, error) {
 		}
 
 		s.handlers = append(s.handlers, uploadHTTP)
+	}
+
+	// initialize thread HTTP handler
+	{
+		identities := []threadhttphandler.HandlerIdentity{
+			threadhttphandler.HandlerThread,
+			threadhttphandler.HandlerThreads,
+		}
+
+		threadHTTP, err := threadhttphandler.New(threadSvc, adminSvc, identities)
+		if err != nil {
+			log.Printf("[thread-api-http] failed to initialize thread http handlers: %s\n", err.Error())
+			return nil, fmt.Errorf("failed to initialize thread http handlers: %s", err.Error())
+		}
+
+		s.handlers = append(s.handlers, threadHTTP)
 	}
 
 	return s, nil
