@@ -68,6 +68,7 @@ func (sc *storeClient) Rollback() error {
 // matchDB denotes a school data in the store.
 type matchDB struct {
 	ID              int64        `db:"id"`
+	BlockChainID    uint64       `db:"blockchain_id"`
 	TournamentNames string       `db:"tournament_names"`
 	GameID          int64        `db:"game_id"`
 	GameNames       string       `db:"game_names"`
@@ -92,6 +93,7 @@ type matchDB struct {
 func (mdb *matchDB) format() match.Match {
 	m := match.Match{
 		ID:              mdb.ID,
+		BlockChainID:    mdb.BlockChainID,
 		TournamentNames: mdb.TournamentNames,
 		GameID:          mdb.GameID,
 		GameNames:       mdb.GameNames,

@@ -103,6 +103,10 @@ func validateMatch(reqMatch match.Match) error {
 		return match.ErrInvalidGameID
 	}
 
+	if reqMatch.BlockChainID <= 0 {
+		return match.ErrInvalidBlockChainID
+	}
+
 	if reqMatch.TeamAID <= 0 {
 		return match.ErrInvalidTeamID
 	}

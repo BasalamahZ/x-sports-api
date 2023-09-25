@@ -11,6 +11,10 @@ var (
 	// invalid.
 	ErrInvalidMatchID = errors.New("invalid match id")
 
+	// ErrInvalidBlockChainID is returned when the given blockchain id is
+	// invalid.
+	ErrInvalidBlockChainID = errors.New("invalid blockchain id")
+
 	// ErrInvalidGameID is returned when the given game id is
 	// invalid.
 	ErrInvalidGameID = errors.New("invalid game id")
