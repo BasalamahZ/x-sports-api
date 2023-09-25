@@ -13,6 +13,7 @@ func (sc *storeClient) CreateMatch(ctx context.Context, reqMatch match.Match) (i
 	// construct arguments filled with fields for the query
 	argsKV := map[string]interface{}{
 		"tournament_names": reqMatch.TournamentNames,
+		"blockchain_id":    reqMatch.BlockChainID,
 		"game_id":          reqMatch.GameID,
 		"game_names":       reqMatch.GameNames,
 		"game_icons":       reqMatch.GameIcons,
@@ -117,6 +118,7 @@ func (sc *storeClient) UpdateMatch(ctx context.Context, reqMatch match.Match) er
 	// construct arguments filled with fields for the query
 	argsKV := map[string]interface{}{
 		"id":               reqMatch.ID,
+		"blockchain_id":    reqMatch.BlockChainID,
 		"tournament_names": reqMatch.TournamentNames,
 		"game_id":          reqMatch.GameID,
 		"game_names":       reqMatch.GameNames,
