@@ -269,6 +269,10 @@ func parseMatchFromCreateRequest(mh matchHTTP) (match.Match, error) {
 		result.TournamentNames = *mh.TournamentNames
 	}
 
+	if mh.BlockChainID != nil {
+		result.BlockChainID = *mh.BlockChainID
+	}
+
 	if mh.GameID != nil {
 		result.GameID = *mh.GameID
 	}

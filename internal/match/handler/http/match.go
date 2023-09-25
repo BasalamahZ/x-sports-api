@@ -260,6 +260,10 @@ func parseMatchFromUpdateRequest(mh matchHTTP, current match.Match) (match.Match
 		result.TournamentNames = *mh.TournamentNames
 	}
 
+	if mh.BlockChainID != nil {
+		result.BlockChainID = *mh.BlockChainID
+	}
+
 	if mh.GameID != nil {
 		result.GameID = *mh.GameID
 	}

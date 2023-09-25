@@ -28,6 +28,10 @@ var (
 	// invalid.
 	errInvalidMatchID = errors.New("INVALID_MATCH_ID")
 
+	// errInvalidBlockChainID is returned when the given blockchain ID is
+	// invalid.
+	errInvalidBlockChainID = errors.New("INVALID_BLOCKCHAIN_ID")
+
 	// errInvalidGameID is returned when the given game ID is
 	// invalid.
 	errInvalidGameID = errors.New("INVALID_GAME_ID")
@@ -82,6 +86,7 @@ var (
 	// as the error instead
 	mapHTTPError = map[error]error{
 		match.ErrInvalidTournamentNames: errInvalidTournamentNames,
+		match.ErrInvalidBlockChainID:    errInvalidBlockChainID,
 		match.ErrInvalidMatchID:         errInvalidMatchID,
 		match.ErrInvalidGameID:          errInvalidGameID,
 		match.ErrInvalidTeamID:          errInvalidTeamID,
