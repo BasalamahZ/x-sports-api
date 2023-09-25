@@ -29,6 +29,7 @@ type Service interface {
 
 type Match struct {
 	ID              int64
+	BlockChainID    uint64
 	TournamentNames string
 	GameID          int64
 	GameNames       string // derived
