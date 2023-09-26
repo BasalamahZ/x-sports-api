@@ -15,7 +15,7 @@ var (
 
 // dateFormat denotes the standard date format used in
 // match HTTP request and response.
-var dateFormat = "2 January 2006"
+var dateFormat = "2006-01-02 15:04:05 -07:00"
 
 // Handler contains admin HTTP-handlers.
 type Handler struct {
@@ -115,7 +115,6 @@ func (h *Handler) Start(multiplexer *mux.Router) error {
 // body.
 type matchHTTP struct {
 	ID              *int64   `json:"id"`
-	BlockChainID    *uint64  `json:"blockchain_id"`
 	TournamentNames *string  `json:"tournament_names"`
 	GameID          *int64   `json:"game_id"`
 	GameNames       *string  `json:"game_names"`

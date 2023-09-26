@@ -12,7 +12,6 @@ func formatMatch(m match.Match) (matchHTTP, error) {
 
 	return matchHTTP{
 		ID:              &m.ID,
-		BlockChainID:    &m.BlockChainID,
 		TournamentNames: &m.TournamentNames,
 		GameID:          &m.GameID,
 		GameNames:       &m.GameNames,
