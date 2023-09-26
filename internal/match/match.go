@@ -25,11 +25,14 @@ type Service interface {
 	// use current values in the given data if do not want
 	// to update some specific attributes.
 	UpdateMatch(ctx context.Context, match Match) error
+
+	// DeleteMatch delete a match
+	// with the given match id.
+	DeleteMatchByID(ctx context.Context, matchID int64) error
 }
 
 type Match struct {
 	ID              int64
-	BlockChainID    uint64
 	TournamentNames string
 	GameID          int64
 	GameNames       string // derived

@@ -92,6 +92,27 @@ func (s *service) GetMatchByID(ctx context.Context, matchID int64) (match.Match,
 	return result, nil
 }
 
+func (s *service) DeleteMatchByID(ctx context.Context, matchID int64) error {
+	// validate match id
+	if matchID <= 0 {
+		return match.ErrInvalidMatchID
+	}
+
+	// get pg store client
+	pgStoreClient, err := s.pgStore.NewClient(false)
+	if err != nil {
+		return err
+	}
+
+	// delete match from pgstore
+	err = pgStoreClient.DeleteMatchByID(ctx, matchID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // validateMatch validates fields of the given Match
 // whether its comply the predetermined rules.
 func validateMatch(reqMatch match.Match) error {
@@ -101,10 +122,6 @@ func validateMatch(reqMatch match.Match) error {
 
 	if reqMatch.GameID <= 0 {
 		return match.ErrInvalidGameID
-	}
-
-	if reqMatch.BlockChainID <= 0 {
-		return match.ErrInvalidBlockChainID
 	}
 
 	if reqMatch.TeamAID <= 0 {
