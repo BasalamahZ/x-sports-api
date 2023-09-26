@@ -13,7 +13,6 @@ func (sc *storeClient) CreateMatch(ctx context.Context, reqMatch match.Match) (i
 	// construct arguments filled with fields for the query
 	argsKV := map[string]interface{}{
 		"tournament_names": reqMatch.TournamentNames,
-		"blockchain_id":    reqMatch.BlockChainID,
 		"game_id":          reqMatch.GameID,
 		"game_names":       reqMatch.GameNames,
 		"game_icons":       reqMatch.GameIcons,
@@ -118,7 +117,6 @@ func (sc *storeClient) UpdateMatch(ctx context.Context, reqMatch match.Match) er
 	// construct arguments filled with fields for the query
 	argsKV := map[string]interface{}{
 		"id":               reqMatch.ID,
-		"blockchain_id":    reqMatch.BlockChainID,
 		"tournament_names": reqMatch.TournamentNames,
 		"game_id":          reqMatch.GameID,
 		"game_names":       reqMatch.GameNames,
@@ -166,4 +164,30 @@ func (sc *storeClient) GetMatchByID(ctx context.Context, matchID int64) (match.M
 	}
 
 	return mdb.format(), nil
+}
+
+func (sc *storeClient) DeleteMatchByID(ctx context.Context, matchID int64) error {
+	// construct arguments filled with fields for the query
+	argsKV := map[string]interface{}{
+		"id": matchID,
+	}
+
+	// prepare query
+	query, args, err := sqlx.Named(queryDeleteMatchByID, argsKV)
+	if err != nil {
+		return err
+	}
+	query, args, err = sqlx.In(query, args...)
+	if err != nil {
+		return err
+	}
+	query = sc.q.Rebind(query)
+
+	// execute query
+	_, err = sc.q.Exec(query, args...)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

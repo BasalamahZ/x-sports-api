@@ -5,7 +5,6 @@ const queryCreateMatch = `
 		match
 	(
 		tournament_names,
-		blockchain_id,
 		game_id,
 		team_a_id,
 		team_b_id,
@@ -17,7 +16,6 @@ const queryCreateMatch = `
 		create_time
 	) VALUES (
 		:tournament_names,
-		:blockchain_id,
 		:game_id,
 		:team_a_id,
 		:team_b_id,
@@ -35,7 +33,6 @@ const queryGetMatchs = `
 	SELECT
 		m.id,
 		m.tournament_names,
-		m.blockchain_id,
 		m.game_id,
 		g.game_names,
 		g.game_icons,
@@ -75,7 +72,6 @@ const queryUpdateMatch = `
 		match
 	SET
 		tournament_names = :tournament_names,
-		blockchain_id = :blockchain_id,
 		game_id = :game_id,
 		team_a_id = :team_a_id,
 		team_b_id = :team_b_id,
@@ -87,6 +83,13 @@ const queryUpdateMatch = `
 		winner = :winner,
 		create_time = :create_time,
 		update_time = :update_time
+	WHERE
+		id = :id
+`
+
+const queryDeleteMatchByID = `
+	DELETE FROM
+		match
 	WHERE
 		id = :id
 `
